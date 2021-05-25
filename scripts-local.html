@@ -79,7 +79,7 @@ function displayList(list) {
 		let entry = FILEINDEX[fileid];
 		if (!entry) {
 			console.warn("Warning: could not find entry for fileid", fileid);
-			return;
+			continue;
 		}
 		if (typeof entry.id === "undefined") {
 			console.warn("ENTRY", entry, "DOES NOT HAVE AN ID");
