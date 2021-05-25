@@ -1,0 +1,138 @@
+
+
+
+<script>
+// vim: ts=3
+
+
+//////////////////////////////
+//
+// prepareFileList -- Call this function after webpage has loaded (see listeners.html)
+//
+
+function prepareFileList() {
+
+	// Sort the worklist by filename (opus/publisher):
+	WORKLIST.sort(function(a, b) {
+		let A = a.file_name;
+		let B = b.file_name;
+		return A.localeCompare(B);
+	});
+
+	FILELIST = [];
+	FILEINDEX = {};
+
+	for (let i=0; i<WORKLIST.length; i++) {
+		let filename = WORKLIST[i].file_name;
+		if (!filename) {
+			continue;
+		}
+		let fileid = filename.replace(/\.krn$/, "");
+		WORKLIST[i].file_id = fileid;
+		FILELIST.push(filename);
+		FILEINDEX[fileid] = WORKLIST[i];
+	}
+
+	// console.log("WORKLIST", WORKLIST);
+	// console.log("FILELIST", FILELIST);
+	// console.log("FILEINDEX", FILEINDEX);
+
+	displayList();
+}
+
+
+
+//////////////////////////////
+//
+// displayList --
+//
+
+function displayList(list) {
+	if (!list) {
+		list = FILELIST;
+	}
+	let target = document.querySelector("#worklist");
+	if (!target) {
+		console.warn("Warning: Cannot find #worklist element");
+		return;
+	}
+	let output = "";
+	let lang = "pl";
+	let scores = "partytura";
+	for (let i=0; i<list.length; i++) {
+		let entry = FILEINDEX[list[i].replace(/\.krn$/, "")];
+		let number = entry.id || 0;
+		let title = entry.title || "NO TITLE";
+		output += `<li> <a href="${lang}/${scores}/${number}">${title}</a> </li>\n`;
+	}
+	target.innerHTML = output;
+}
+
+
+
+//////////////////////////////
+//
+// doMusicSearch --
+//
+
+function doMusicSearch() {
+	let pitch = document.getElementById("pitch");
+	let pquery = pitch.value;
+	let interval = document.getElementById("interval");
+	let iquery = interval.value;
+	let rhythm = document.getElementById("rhythm");
+	let rquery = rhythm.value;
+	//let relement = document.getElementById("repertory");
+	//let repertory = relement.value;
+	if (
+			pquery.match(/^\s*$/) &&
+			iquery.match(/^\s*$/) &&
+			rquery.match(/^\s*$/)
+		) {
+			let results = document.querySelector("#results");
+			let summary = document.querySelector("#summary");
+			results.textContent = "";
+			summary.textContent = "";
+			//hideMusicSearchCopyLink();
+			return;
+		}
+		document.body.style.cursor = "wait !important";
+		//displayMusicSearchCopyLink();
+		PITCHQUERY    = pquery;
+		RHYTHMQUERY   = rquery;
+		INTERVALQUERY = iquery;
+
+    	let url = "https://humdrum.nifc.pl/cgi-bin/chopin-search?";
+    	url += "pitch="    + encodeURIComponent(pquery);
+    	url += "&interval=" + encodeURIComponent(iquery);
+    	url += "&rhythm="   + encodeURIComponent(rquery);
+
+    	setTimeout(function () {
+    		document.body.classList.add("waiting");
+    	}, 0);
+
+    	let request = new XMLHttpRequest();
+
+    	request.onreadystatechange = function() {
+    		if (request.readyState == XMLHttpRequest.DONE) {
+    			console.log("SEARCH RESULTS:", request.responseText);
+    			//displayResults(request.responseText, {pquery: pquery, iquery: iquery, rquery: rquery});
+    			setTimeout(function () {
+    				document.body.classList.remove("waiting");
+    			}, 10);
+    			document.body.style.cursor = "auto";
+    		} else if (request.status == 400) {
+    			console.log("THERE WAS AN ERROR IN THE SEARCH");
+    		} else {
+    			console.log("STATUS =", request.status);
+    		}
+        //console.log("again:", request.responseText);
+    	};
+
+      request.open("GET", url);
+    	request.send();
+}
+
+
+
+</script>

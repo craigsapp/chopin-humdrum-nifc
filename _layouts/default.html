@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pl" dir="ltr">
+	<head>
+	<!--
+		vim: ts=3
+	-->
+	{% include head/index.html %}
+	</head>
+
+	<body>
+		{% include header/index.html %}
+
+		<main>
+			{% include navigator/index.html %}
+
+			{{ content }}
+
+		</main>
+		{% include footer/index.html %}
+	</body>
+</html>
+
+
+
