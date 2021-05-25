@@ -71,7 +71,9 @@ sub createThemaxOptions {
 
 	$opts{'pitch'} =~ s/[\\;\/\`\"\']//g;
 	if ($opts{'pitch'} !~ /^\s*$/) {
-		$output .= " -p \"$opts{'pitch'}\"";
+		$output .= " -D \"$opts{'pitch'}\"";
+		# Use -p for chromatic pitches by default:
+		# $output .= " -p \"$opts{'pitch'}\"";
 	}
 
 	$opts{'interval'} =~ s/[\\;\/\`\"\']//g;
