@@ -48,9 +48,23 @@ function prepareFileList() {
 //
 
 function displayList(list) {
+	let count = "";
 	if (!list) {
 		list = FILELIST;
+		count = list.length + " scores";
+	} else {
+		count = list.length;
+		if (count == 1) {
+			count += " score matches";
+		} else {
+			count += " scores match";
+		}
 	}
+	let celement = document.querySelector("#count");
+	if (celement) {
+		celement.innerHTML = count;
+	}
+
 	let target = document.querySelector("#worklist");
 	if (!target) {
 		console.warn("Warning: Cannot find #worklist element");
@@ -60,7 +74,16 @@ function displayList(list) {
 	let lang = "pl";
 	let scores = "partytura";
 	for (let i=0; i<list.length; i++) {
-		let entry = FILEINDEX[list[i].replace(/\.krn$/, "")];
+		let fileid = list[i].replace(/\.krn$/, "");
+		let entry = FILEINDEX[fileid];
+		if (!entry) {
+			console.warn("Warning: could not find entry for fileid", fileid);
+			return;
+		}
+		if (typeof entry.id === "undefined") {
+			console.warn("ENTRY", entry, "DOES NOT HAVE AN ID");
+			continue;
+		}
 		let number = entry.id || 0;
 		let title = entry.title || "NO TITLE";
 		output += `<li> <a href="${lang}/${scores}/${number}">${title}</a> </li>\n`;
@@ -70,69 +93,7 @@ function displayList(list) {
 
 
 
-//////////////////////////////
-//
-// doMusicSearch --
-//
-
-function doMusicSearch() {
-	let pitch = document.getElementById("pitch");
-	let pquery = pitch.value;
-	let interval = document.getElementById("interval");
-	let iquery = interval.value;
-	let rhythm = document.getElementById("rhythm");
-	let rquery = rhythm.value;
-	//let relement = document.getElementById("repertory");
-	//let repertory = relement.value;
-	if (
-			pquery.match(/^\s*$/) &&
-			iquery.match(/^\s*$/) &&
-			rquery.match(/^\s*$/)
-		) {
-			let results = document.querySelector("#results");
-			let summary = document.querySelector("#summary");
-			results.textContent = "";
-			summary.textContent = "";
-			//hideMusicSearchCopyLink();
-			return;
-		}
-		document.body.style.cursor = "wait !important";
-		//displayMusicSearchCopyLink();
-		PITCHQUERY    = pquery;
-		RHYTHMQUERY   = rquery;
-		INTERVALQUERY = iquery;
-
-    	let url = "https://humdrum.nifc.pl/cgi-bin/chopin-search?";
-    	url += "pitch="    + encodeURIComponent(pquery);
-    	url += "&interval=" + encodeURIComponent(iquery);
-    	url += "&rhythm="   + encodeURIComponent(rquery);
-
-    	setTimeout(function () {
-    		document.body.classList.add("waiting");
-    	}, 0);
-
-    	let request = new XMLHttpRequest();
-
-    	request.onreadystatechange = function() {
-    		if (request.readyState == XMLHttpRequest.DONE) {
-    			console.log("SEARCH RESULTS:", request.responseText);
-    			//displayResults(request.responseText, {pquery: pquery, iquery: iquery, rquery: rquery});
-    			setTimeout(function () {
-    				document.body.classList.remove("waiting");
-    			}, 10);
-    			document.body.style.cursor = "auto";
-    		} else if (request.status == 400) {
-    			console.log("THERE WAS AN ERROR IN THE SEARCH");
-    		} else {
-    			console.log("STATUS =", request.status);
-    		}
-        //console.log("again:", request.responseText);
-    	};
-
-      request.open("GET", url);
-    	request.send();
-}
-
-
-
 </script>
+
+
+

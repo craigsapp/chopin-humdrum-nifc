@@ -1,10 +1,35 @@
+<!--
+	vim: ts=3:ft=javascript
+-->
 
 
 <div style="padding-bottom:20px;">
-	<input autocomplete="off" id="pitch" type="text" class="form-control" placeholder="Wyszukaj dźwięki">
-	<input autocomplete="off" id="interval" type="text" class="form-control" placeholder="Wyszukaj interwały">
-	<input autocomplete="off" id="rhythm" type="text" class="form-control" placeholder="Wyszukaj rytm">
-	<button onclick="doMusicSearch()" class="collection-button-search" id="searchButton">Szukaj</button>
+
+	<input
+		autocomplete="off"
+		id="pitch"
+		type="text"
+		class="form-control"
+		placeholder="Wyszukaj dźwięki">
+
+	<input
+		autocomplete="off"
+		id="interval"
+		type="text"
+		class="form-control"
+		placeholder="Wyszukaj interwały">
+
+	<input
+		autocomplete="off"
+		id="rhythm"
+		type="text"
+		class="form-control"
+		placeholder="Wyszukaj rytm">
+
+	<button onclick="doMusicSearch()"
+		class="collection-button-search"
+		id="searchButton">Szukaj</button>
+
 </div>
 
 <style>
@@ -27,5 +52,117 @@ button#searchButton {
 }
 
 </style>
+
+
+<script>
+
+// Prevent multiple searches being done at the same time:
+let ACTIVE = 0;
+
+// Last pitch query:
+let PITCHQUERY    = "";
+
+// Last rhythm query:
+let RHYTHMQUERY   = "";
+
+// Last interval query:
+let INTERVALQUERY = "";
+
+
+//////////////////////////////
+//
+// doMusicSearch --
+//
+
+function doMusicSearch() {
+	if (ACTIVE) {
+		alert("Already searching.");
+		return;
+	}
+	let pitch = document.getElementById("pitch");
+	let pquery = pitch.value;
+
+	let interval = document.getElementById("interval");
+	let iquery = interval.value;
+
+	let rhythm = document.getElementById("rhythm");
+	let rquery = rhythm.value;
+	//let relement = document.getElementById("repertory");
+	//let repertory = relement.value;
+
+	if (
+			pquery.match(/^\s*$/) &&
+			iquery.match(/^\s*$/) &&
+			rquery.match(/^\s*$/)
+		) {
+
+			//hideMusicSearchCopyLink();
+			displayList();
+			return;
+		}
+
+		//displayMusicSearchCopyLink();
+		PITCHQUERY    = pquery;
+		RHYTHMQUERY   = rquery;
+		INTERVALQUERY = iquery;
+
+    	let url = "https://search.chopin.humdrum.org/cgi-bin/chopin-search?";
+    	url += "pitch="     + encodeURIComponent(pquery);
+    	url += "&interval=" + encodeURIComponent(iquery);
+    	url += "&rhythm="   + encodeURIComponent(rquery);
+
+    	setTimeout(function () {
+			ACTIVE = 1;
+    	 	document.body.classList.add("waiting");
+    	}, 0);
+
+    	let request = new XMLHttpRequest();
+
+    	request.onreadystatechange = function() {
+    		if (request.readyState == XMLHttpRequest.DONE) {
+    			setTimeout(function () {
+					ACTIVE = 0;
+    				document.body.classList.remove("waiting");
+    			}, 10);
+    			console.log("SEARCH RESULTS:", request.responseText);
+				let filelist = prepareFilelistFromString(request.responseText);
+				displayList(filelist);
+    			document.body.style.cursor = "auto";
+    		} else if (request.status == 400) {
+    			console.log("THERE WAS AN ERROR IN THE SEARCH");
+    		} else {
+    			console.log("STATUS =", request.status);
+    		}
+        //console.log("again:", request.responseText);
+    	};
+
+      request.open("GET", url);
+    	request.send();
+}
+
+
+
+//////////////////////////////
+//
+// prepareFilelistFromString -- Only output lines that start with a digit,
+//     since all files start with a digit; otherwise, probably suppress lines
+//     that start with # in case there are any.
+//
+
+function prepareFilelistFromString(text) {
+	let lines = text.split(/\r?\n/);
+	let output = [];
+	for (let i=0; i<lines.length; i++) {
+		if (!lines[i].match(/^\d/)) {
+			continue;
+		}
+		output.push(lines[i]);
+	}
+	return output;
+}
+
+
+</script>
+
 
 
