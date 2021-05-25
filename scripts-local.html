@@ -73,6 +73,7 @@ function displayList(list) {
 	let output = "";
 	let lang = "pl";
 	let scores = "partytura";
+	let computer = "https://humdrum.nifc.pl";
 	for (let i=0; i<list.length; i++) {
 		let fileid = list[i].replace(/\.krn$/, "");
 		let entry = FILEINDEX[fileid];
@@ -86,7 +87,7 @@ function displayList(list) {
 		}
 		let number = entry.id || 0;
 		let title = entry.title || "NO TITLE";
-		output += `<li> <a href="${lang}/${scores}/${number}">${title}</a> </li>\n`;
+		output += `<li> <a href="${computer}/${lang}/${scores}/${number}">${title}</a> </li>\n`;
 	}
 	target.innerHTML = output;
 }
