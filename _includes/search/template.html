@@ -1,0 +1,67 @@
+<!--
+	Template for repertory searching
+-->
+
+
+<div style="padding-bottom:20px;"></div>
+{% raw %}
+<script id="search-translation" type="text/x-handlebars-template">
+	<input
+		autocomplete="off"
+		id="pitch"
+		type="text"
+		class="form-control"
+		placeholder="{{pitch_placeholder}}">
+
+	<input
+		autocomplete="off"
+		id="interval"
+		type="text"
+		class="form-control"
+		placeholder="{{interval_placeholder}}">
+
+	<input
+		autocomplete="off"
+		id="rhythm"
+		type="text"
+		class="form-control"
+		placeholder="{{rhythm_placeholder}}">
+
+	<button onclick="doMusicSearch()"
+		class="collection-button-search"
+		id="searchButton">{{search}}</button>
+</script>
+{% endraw %}
+
+
+
+<script class="translations search-translation" type="text/x-aton">
+
+@@BEGIN:TRANSLATION
+@TAG:	pitch_placeholder
+@PL:	wysokości dźwięków
+@EN:	pitch
+@@END:	TRANSLATION
+
+@@BEGIN: TRANSLATION
+@TAG:	interval_placeholder
+@PL:	następstwo interwałów
+@EN:	interval
+@@END:	TRANSLATION
+
+@@BEGIN: TRANSLATION
+@TAG:	rhythm_placeholder
+@PL:	rytm
+@EN:	rhythm
+@@END: TRANSLATION
+
+@@BEGIN: TRANSLATION
+@TAG: search
+@PL: Szukaj
+@EN: Search
+@@END: TRANSLATION
+
+</script>
+
+
+

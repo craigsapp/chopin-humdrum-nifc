@@ -1,0 +1,48 @@
+
+<script>
+
+
+// LANGAUGE: The language to display.  This will be set from
+// localStorage.LANGUAGE, or the browser's preferred language.
+LANGUAGE = "";
+
+
+// CGI: The CGI parameters from the URL.
+let CGI = {};
+
+
+
+// WORKLIST: List of Humdrum files, with each entry being in this format:
+// [
+//    {
+//       "id": "959",
+//       "file_name": "002-1-Hat.krn",
+//       "title": "Wariacje Op. 2 (Haslinger)"
+//    },
+// ...
+// ]
+//
+// Meaning of the parameters:
+//    id:        PHP (SQL) index for work.
+//    file_name: Filename of work.
+//    title:     Title of work.
+//
+// This list is sorted by prepareFileList()
+var WORKLIST = {% include worklist.json %};
+
+
+
+// FILELIST: A list of the file_name properties of WORKLIST (after sorting).
+var FILELIST = []; 
+
+
+
+// FILEINDEX: A hash of the WORKLIST indexed by the filename minus the .krn extension.
+var FILEINDEX = [];
+
+
+
+</script>
+
+
+

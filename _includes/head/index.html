@@ -2,20 +2,28 @@
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title></title>
-<link rel="stylesheet" type="text/css" href="/assets/css/header.css">
-<link rel="stylesheet" type="text/css" href="/assets/css/main.css?v=1.0">
-<link rel="stylesheet" type="text/css" href="/assets/css/footer.css">
-<script src="https://js.humdrum.org/scripts/humdrum.js"></script>
-<script src="https://plugin.humdrum.org/scripts/humdrum-notation-plugin-worker.js"></script>
-<script src="/assets/js/main.js"></script>
-<link href="https://fonts.googleapis.com/css?family=Montserrat:400,500&amp;display=swap" rel="stylesheet">
+<title>{{page.title}}</title>
+<!--
+	vim: ts=3:nowrap
+-->
+
+<!--
+<link 
+href="https://fonts.googleapis.com/css?family=Montserrat:400,500&amp;display=swap" 
+rel="stylesheet">
+-->
+
+{% include styles-global.html %}
+
+{% if page.hnp == "true" %}
+	<script src="https://js.humdrum.org/scripts/humdrum.js"></script>
+	<script src="https://plugin.humdrum.org/scripts/humdrum-notation-plugin-worker.js"></script>
+{% endif %}
+
 
 <!--
 <base href="https://humdrum.nifc.pl/">
 -->
-
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
 
 

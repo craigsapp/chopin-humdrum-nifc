@@ -1,0 +1,196 @@
+
+
+<script>
+// vim: ts=3:nowrap:ft=javascript
+//
+// Translation interface
+//
+// Translations consist of three components:
+//   (1) An element (usually empty) that is the target for placing the
+//       output of a translation template.
+//   (2) Immediately following the target element is a script element
+//       with type="text/x-handlebars-template" which contains the
+//       template for the content to store in the element immediate
+//       above it.
+//   (3) A script of type="text/x-aton" which contains the translations
+//       to apply to the template.  There must be a class on the script
+//       that matches to the ID of the script in component 2.
+//
+
+
+//////////////////////////////
+//
+// ApplyLanguageTemplates -- Collect a list of all templates on the page
+//    and process them.  Currently all template will assumed to be translation
+//    templates, but in the future all scripts with an ID in the form
+//    *-translation could be selected.
+//
+
+function ApplyLanguageTemplates(language) {
+	if (!language) {
+		language = LANGUAGE;
+		if (!language) {
+			console.warn("Error: no language specified");
+			return;
+		}
+	}
+
+	let templates = document.querySelectorAll("script[type='text/x-handlebars-template']");
+	for (let i=0; i<templates.length; i++) {
+		processTemplate(templates[i], language);
+	}
+	DisplaySelectedLanguageSpans(language);
+}
+
+
+
+//////////////////////////////
+//
+// processTemplate -- Fill in the translations for a given template and
+//    place the results on the page.
+//
+
+function processTemplate(source, language) {
+	if (!language) {
+		language = LANGUAGE;
+		if (!language) {
+			console.warn("Error: no language specified");
+			return;
+		}
+	}
+
+	if (!source) {
+		console.warn("Error: template is undefined");
+		return;
+	}
+	if (source.nodeName !== "SCRIPT") {
+		console.warn("Error: template element is not a script");
+		return;
+	}
+	if (source.getAttribute("type") !== "text/x-handlebars-template") {
+		console.warn("Error: template type is not 'text/x-handlebars-template'");
+		return;
+	}
+	let target = source.previousElementSibling;
+	if (!target) {
+		console.warn("Error: no target element");
+		return;
+	}
+	let id = source.id;
+	if (!id) {
+		console.warn("Error: missing ID for template source:", source);
+		return;
+	}
+
+	let translations = getTranslations(id, language);
+
+	if (!translations) {
+		console.warn("Error: no translations, so not processing template", id);
+		return;
+	}
+
+	let tsource = source.textContent;
+	let template = Handlebars.compile(tsource);
+	let output = template(translations);
+	target.innerHTML = output;
+}
+
+
+
+//////////////////////////////
+//
+// getTranslations --
+//
+
+function getTranslations(id, language) {
+	if (!id) {
+		console.warn("Error: id is empty in getTranslations()");
+		return {};
+	}
+	if (!language) {
+		language = LANGUAGE;
+		if (!language) {
+			console.warn("Error: no language specified");
+			return {};
+		}
+	}
+
+	let source = document.querySelector(`script.${id}[type='text/x-aton']`);
+	if (!source) {
+		console.warn("Error: no translations for template", id);
+		return {};
+	}
+
+	let aton = new ATON;
+	let data = source.textContent;
+	let object = aton.parse(data);
+	if (typeof object.TRANSLATION === "undefined") {
+		console.warn("Error: translation data is not formatted correctly for id:", id);
+		return {};
+	}
+	let translations = object.TRANSLATION;
+	if (!Array.isArray(translations)) {
+		translations = [ translations ];
+	}
+	let output = {};
+
+	for (let i=0; i<translations.length; i++) {
+		let tag = translations[i].TAG;
+		let value = translations[i][language];
+		if (!tag) {
+			console.warn("Warning: missing tag for translation:", translations[i]);
+			continue;
+		}
+		if (!value) {
+			value = translations[i].EN;
+		}
+		if (!value) {
+			console.warn("Warning: missing langauge entry", language, "in", translations[i]);
+			continue;
+		}
+		if (typeof output[tag] !== "undefined") {
+			console.warn("Warning: duplicate tag:", tag, ". Ignoring entry.");
+			continue;
+		}
+		output[tag] = value;
+	}
+
+	return output;
+}
+
+
+
+///////////////////////////////
+//
+// DisplaySelectedLanguageSpans -- Show only the selected language span.
+//
+
+function DisplaySelectedLanguageSpans(language) {
+	if (!language) {
+		language = LANGUAGE;
+		if (!language) {
+			console.warn("Error: no language specified");
+			return;
+		}
+	}
+
+	let spans = document.querySelectorAll("span[class|='language'");
+	for (let i=0; i<spans.length; i++) {
+		let classes = spans[i].getAttribute("class");
+		let matches = classes.match(/language-([^\s]+)/);
+		if (matches) {
+			let lang = matches[1];
+			if (lang === language) {
+				spans[i].classList.remove("hidden");
+			} else {
+				spans[i].classList.add("hidden");
+			}
+		}
+	}
+}
+
+
+</script>
+
+
+

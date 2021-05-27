@@ -5,41 +5,6 @@
 // vim: ts=3
 
 
-//////////////////////////////
-//
-// prepareFileList -- Call this function after webpage has loaded (see listeners.html)
-//
-
-function prepareFileList() {
-
-	// Sort the worklist by filename (opus/publisher):
-	WORKLIST.sort(function(a, b) {
-		let A = a.file_name;
-		let B = b.file_name;
-		return A.localeCompare(B);
-	});
-
-	FILELIST = [];
-	FILEINDEX = {};
-
-	for (let i=0; i<WORKLIST.length; i++) {
-		let filename = WORKLIST[i].file_name;
-		if (!filename) {
-			continue;
-		}
-		let fileid = filename.replace(/\.krn$/, "");
-		WORKLIST[i].file_id = fileid;
-		FILELIST.push(filename);
-		FILEINDEX[fileid] = WORKLIST[i];
-	}
-
-	// console.log("WORKLIST", WORKLIST);
-	// console.log("FILELIST", FILELIST);
-	// console.log("FILEINDEX", FILEINDEX);
-
-	displayList();
-}
-
 
 
 //////////////////////////////

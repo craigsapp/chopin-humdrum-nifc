@@ -1,0 +1,82 @@
+
+
+
+<script>
+// vim: ts=3:ft=javascript
+
+
+//////////////////////////////
+//
+// ChooseLangauge -- Load the language from sessionStorage, or if none
+//   selected, set it from the browser language preference.  This function
+//   is called when the page is first loaded (via a DOMContentLoaded event).
+//
+
+function ChooseLanguage() {
+	if (sessionStorage.LANGUAGE) {
+		let value = sessionStorage.LANGUAGE;
+		if (value === "EN") {
+			LANGUAGE = "EN";
+		} else if (value == "PL") {
+			LANGUAGE = "PL";
+		}
+	} else {
+		let language = navigator.language.replace(/-.*/, "").toUpperCase();
+		if (language === "EN") {
+			LANGUAGE = "EN";
+		} else if (language === "PL") {
+			LANGUAGE = "PL";
+		}
+	}
+	if (LANGUAGE) {
+		sessionStorage.LANGUAGE = LANGUAGE;
+	}
+	HighlightLanguage();
+	ApplyLanguageTemplates(LANGUAGE);
+}
+
+
+
+//////////////////////////////
+//
+// SelectLanguage -- This function is called when a language button
+//   in the navigator is pressed.
+//
+
+function SelectLanguage(event) {
+	let target = event.target;
+	let content = target.textContent;
+	if (content === "EN") {
+		LANGUAGE = "EN";
+		sessionStorage.LANGUAGE = LANGUAGE;
+	} else if (content === "PL") {
+		LANGUAGE = "PL";
+		sessionStorage.LANGUAGE = LANGUAGE;
+	}
+	HighlightLanguage();
+	ApplyLanguageTemplates(LANGUAGE);
+}
+
+
+
+//////////////////////////////
+//
+// HighlightLanguage -- Highlight the current language in the navigator.
+//
+
+function HighlightLanguage() {
+	let list = document.querySelectorAll(".button-language");
+	for (let i=0; i<list.length; i++) {
+		if (list[i].textContent === LANGUAGE) {
+			list[i].classList.add("selected");
+		} else {
+			list[i].classList.remove("selected");
+		}
+	}
+}
+
+
+</script>
+
+
+
