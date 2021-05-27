@@ -2,3 +2,7 @@
 Font downloaded from:
 https://google-webfonts-helper.herokuapp.com/fonts/montserrat?subsets=latin,latin-ext
 
+Reference:
+https://www.machmetrics.com/speed-blog/google-fonts-slow-your-site-make-google-fonts-faster/#:~:text=But%20if%20you've%20ever,resulting%20in%20additional%20loading%20time.
+
+
