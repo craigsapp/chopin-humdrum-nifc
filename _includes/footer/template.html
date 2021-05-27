@@ -10,7 +10,7 @@
 		<center>
 			<div style="padding-right:40px">
 				<p style="display:inline; padding-right:40px"> {{powered_by}} </p>
-				<a href="https://doc.verovio.humdrum.org" target="_blank">{% endraw %}{% include images/vhv-logo.html %}{% raw %}</a>
+				<a href="https://doc.verovio.humdrum.org{{#if (isLanguage "PL" _language)}}/index-PL.html{{/if}}" target="_blank">{% endraw %}{% include images/vhv-logo.html %}{% raw %}</a>
 				<a href="https://www.verovio.org/index.xhtml" target="_blank">{% endraw %}{% include images/verovio-logo.html %}{% raw %}</a>
 			</div>
 		</center>
@@ -47,6 +47,13 @@ footer img {
 </style>
 
 
+<script>
+
+Handlebars.registerHelper('isLanguage', function (target, source) {
+	return target === source;
+});
+
+</script>
 
 
 
